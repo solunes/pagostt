@@ -1,0 +1,34 @@
+{
+    "name": "solunes/pagostt",
+    "description": "Paquete adicional de PagosTT para Solunes Digital.",
+    "keywords": ["laravel", "solunes", "pagostt"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Solunes Digital",
+            "email": "info@solunes.com"
+        }
+    ],
+    "require": {
+        "solunes/master": "1.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/database/migrations",
+            "src/app/Providers",
+            "src/app/Controllers",
+            "src/app/Console"
+       ],
+        "psr-4": {
+            "Solunes\\Pagostt\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "scripts": {
+        "test": "phpunit"
+    },
+    "prefer-stable": true
+}
