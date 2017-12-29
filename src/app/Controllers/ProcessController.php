@@ -23,7 +23,7 @@ class ProcessController extends Controller {
 	}
 
     public function getMakeAllPayments($customer_id) {
-    	$customer = \PagosttBridge::get_customer($customer_id, true, false);
+    	$customer = \PagosttBridge::getCustomer($customer_id, true, false);
 	    if($customer){
 	      $pagostt_payment = \Pagostt::generatePaymentCode($customer_id, $customer['payment_ids']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, NULL, $pagostt_payment);
@@ -35,8 +35,8 @@ class ProcessController extends Controller {
     }
 
     public function getMakeSinglePayment($customer_id, $payment_id) {
-    	$customer = \PagosttBridge::get_customer($customer_id, false, false);
-    	$payment = \PagosttBridge::get_payment($payment_id);
+    	$customer = \PagosttBridge::getCustomer($customer_id, false, false);
+    	$payment = \PagosttBridge::getPayment($payment_id);
 	    if($customer&&$payment){
 	      $pagostt_payment = \Pagostt::generatePaymentCode($customer_id, [$payment_id]);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_payment);
