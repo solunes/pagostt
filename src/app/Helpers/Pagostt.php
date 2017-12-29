@@ -33,12 +33,12 @@ class Pagostt {
             $pagostt_payment->payment_id = $payment_id;
             $pagostt_payment->save();
         }
-        return $pagostt_payment;
+        return $pagostt_transaction;
     }
 
     public static function generatePaymentCode() {
         $token = \Pagostt::generateToken([8,4,4,4,12]);
-        if(\Solunes\Pagostt\App\PagosttPayment::where('payment_code', $token)->first()){
+        if(\Solunes\Pagostt\App\PttTransaction::where('payment_code', $token)->first()){
             $token = \Pagostt::generatePaymentCode();
         }
         return $token;
@@ -56,11 +56,11 @@ class Pagostt {
         return $full_token;
     }
 
-    public static function generateTransactionArray($customer, $payment, $pagostt_payment) {
+    public static function generateTransactionArray($customer, $payment, $pagostt_transaction) {
         $final_fields = array(
             "appkey" => config('pagostt.app_key'),
             "email_cliente" => $customer['email'],
-            "callback_url" => url('api/pago-confirmado/'.$pagostt_payment->payment_code),
+            "callback_url" => url('api/pago-confirmado/'.$pagostt_transaction->payment_code),
             "razon_social" => $customer['nit_name'],
             "nit" => $customer['nit_number'],
             "valor_envio" => 0,

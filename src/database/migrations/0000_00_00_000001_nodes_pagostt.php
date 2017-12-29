@@ -23,6 +23,7 @@ class NodesPagostt extends Migration
         });
         Schema::create('ptt_transaction_payments', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('parent_id')->nullable();
             $table->string('payment_id')->nullable();
             $table->timestamps();
         });

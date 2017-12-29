@@ -6,12 +6,11 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller\Api;
-use App\OperatorAttendance;
 
 class PagosttController extends BaseController {
 
 	public function getCustomerPayments($app_key, $customer_id){
-        if($app_token==config('pagostt.app_key')){
+        if($app_key==config('pagostt.app_key')){
         	$customer = \PagosttBridge::getCustomer($customer_id, true, true);
         	if($customer&&is_array($customer)){
 	            $pending_payments = $customer['pending_payments'];

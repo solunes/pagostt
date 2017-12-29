@@ -1,6 +1,6 @@
 <?php
 
-namespace Solunes\Pagostt\App\Controllers\Integrations;
+namespace Solunes\Pagostt\App\Controllers\Api;
 
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Routing\Controller;

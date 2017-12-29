@@ -27,7 +27,7 @@ class PttTransaction extends Model {
 	);
     
     public function ptt_transaction_payments() {
-        return $this->hasMany('Solunes\Pagostt\App\PttTransactionPayment');
+        return $this->hasMany('Solunes\Pagostt\App\PttTransactionPayment', 'parent_id');
     }
 
 }
