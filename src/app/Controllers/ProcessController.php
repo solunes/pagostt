@@ -25,7 +25,7 @@ class ProcessController extends Controller {
     public function getMakeAllPayments($customer_id) {
     	$customer = \PagosttBridge::getCustomer($customer_id, true, false);
 	    if($customer){
-	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $customer['payment_ids']);
+	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $customer['payment_ids'], $customer['amount']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, NULL, $pagostt_transaction);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      return redirect($api_url);
@@ -38,7 +38,7 @@ class ProcessController extends Controller {
     	$customer = \PagosttBridge::getCustomer($customer_id, false, false);
     	$payment = \PagosttBridge::getPayment($payment_id);
 	    if($customer&&$payment){
-	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, [$payment_id]);
+	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, [$payment_id], $customer['amount']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      return redirect($api_url);

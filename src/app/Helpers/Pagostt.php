@@ -21,11 +21,12 @@ class Pagostt {
         return $encoded_item;
     }
 
-    public static function generatePaymentTransaction($customer_id, $payment_ids) {
+    public static function generatePaymentTransaction($customer_id, $payment_id, $amount = NULL) {
         $payment_code = \Pagostt::generatePaymentCode();
         $pagostt_transaction = new \Solunes\Pagostt\App\PttTransaction;
         $pagostt_transaction->customer_id = $customer_id;
         $pagostt_transaction->payment_code = $payment_code;
+        $pagostt_transaction->amount = $amount;
         $pagostt_transaction->status = 'holding';
         $pagostt_transaction->save();
         foreach($payment_ids as $payment_id){

@@ -14,6 +14,7 @@ class PttTransaction extends Model {
 		'customer_id'=>'required',
 		'payment_code'=>'required',
 		'transaction_id'=>'required',
+		'amount'=>'required',
 		'status'=>'required',
 	);
 
@@ -23,6 +24,7 @@ class PttTransaction extends Model {
 		'customer_id'=>'required',
 		'payment_code'=>'required',
 		'transaction_id'=>'required',
+		'amount'=>'required',
 		'status'=>'required',
 	);
     

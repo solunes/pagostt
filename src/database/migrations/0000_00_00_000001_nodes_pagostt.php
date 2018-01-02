@@ -18,6 +18,7 @@ class NodesPagostt extends Migration
             $table->string('customer_id')->nullable();
             $table->string('payment_code')->nullable();
             $table->string('transaction_id')->nullable();
+            $table->decimal('amount', 10, 2)->nullable();
             $table->enum('status', ['holding','paid','cancelled'])->default('holding');
             $table->timestamps();
         });
