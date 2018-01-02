@@ -44,7 +44,7 @@ class PagosttController extends BaseController {
     public function getSuccessfulPayment($payment_code){
         if(request()->has('transaction_id')&&$payment_code&&$ptt_transaction = \Solunes\Pagostt\App\PttTransaction::where('payment_code',$payment_code)->where('transaction_id',request()->input('transaction_id'))->where('status','holding')->first()){
             $ptt_transaction->status = 'confirmed';
-            $ptt_transaction->->save();
+            $ptt_transaction->save();
             $payment_registered = \PagosttBridge::transactionSuccesful($ptt_transaction);
             if(config('pagostt.notify_email')){
                 $customer = \PagosttBridge::getCustomer($ptt_transaction->customer_id);
