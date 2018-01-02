@@ -48,7 +48,7 @@ class PagosttController extends BaseController {
             $payment_registered = \PagosttBridge::transactionSuccesful($ptt_transaction);
             if(config('pagostt.notify_email')){
                 $customer = \PagosttBridge::getCustomer($ptt_transaction->customer_id);
-                Mail::send('pagostt::emails.successful-payment', ['amount'=>$ptt_transaction->amount, 'email'=>$customer['email']], function($m) use($customer) {
+                \Mail::send('pagostt::emails.successful-payment', ['amount'=>$ptt_transaction->amount, 'email'=>$customer['email']], function($m) use($customer) {
                     if($customer['name']){
                         $name = $customer['name'];
                     } else {
