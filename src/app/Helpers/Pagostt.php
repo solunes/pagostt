@@ -105,6 +105,12 @@ class Pagostt {
         return $api_url;
     }
 
+    public static function encrypt($plainTextToEncrypt) {
+        $newEncrypter = new \Illuminate\Encryption\Encrypter( config('pagostt.salt'), config( 'app.cipher' ) );
+        $encrypted = $newEncrypter->encrypt( $plainTextToEncrypt );
+        return $encrypted;
+    }
+    
     public static function generatePaymentCallback($payment_code) {
         return url('api/pago-confirmado/'.$payment_code);
     }
