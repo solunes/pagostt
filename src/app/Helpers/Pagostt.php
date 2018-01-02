@@ -106,7 +106,7 @@ class Pagostt {
     }
 
     public static function generatePaymentCallback($payment_code) {
-        return url('api/pago-confirmado/'.$payment_code)
+        return url('api/pago-confirmado/'.$payment_code);
     }
 
 }
