@@ -13,8 +13,18 @@ class PagosttController extends BaseController {
         if($app_key==config('pagostt.app_key')){
         	$customer = \PagosttBridge::getCustomer($customer_id, true, true);
         	if($customer&&is_array($customer)){
-	            $pending_payments = $customer['pending_payments'];
-	            return $this->response->array(['enabled'=>config('pagostt.customer_recurrent_payments'), 'app_key'=>$app_key, 'app_name'=>config('pagostt.app_name'), 'codigo_cliente'=>$customer_id, 'pagos_pendientes'=>$pending_payments])->setStatusCode(200);
+                $pending_payments = $customer['pending_payments'];
+                $final_pending_payments = [];
+                foreach($pending_payments as $payment_id => $pending_payment){
+                    $final_pending_payments[$payment_id] = $pending_payment;
+                    foreach($pending_payment['items'] as $key => $item){
+                        $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer['id'], [$payment_id]);
+                        $callback_url = \Pagostt::generatePaymentCallback($pagostt_transaction->payment_code);
+                        $final_pending_payments[$payment_id['items'][$key]['apkey_empresa_final'] = $app_key;
+                        $final_pending_payments[$payment_id['items'][$key]['call_back_url'] = $callback_url;
+                    }
+                }
+	            return $this->response->array(['enabled'=>config('pagostt.customer_recurrent_payments'), 'app_key'=>$app_key, 'app_name'=>config('pagostt.app_name'), 'codigo_cliente'=>$customer_id, 'pagos_pendientes'=>$final_pending_payments])->setStatusCode(200);
         	} else {
             	throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('El cliente introducido no se encuentra.');
         	}

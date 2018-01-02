@@ -11,11 +11,12 @@ class Pagostt {
         return $token;
     }
 
-    public static function generatePaymentItem($concept, $quantity, $cost) {
+    public static function generatePaymentItem($concept, $quantity, $cost, $invoice = true) {
         $item = [];
         $item['concepto'] = $concept;
         $item['cantidad'] = $quantity;
         $item['costo_unitario'] = $cost;
+        $item['factura_independiente'] = $invoice;
         $encoded_item = json_encode($item);
         return $encoded_item;
     }
@@ -57,10 +58,11 @@ class Pagostt {
     }
 
     public static function generateTransactionArray($customer, $payment, $pagostt_transaction) {
+        $callback_url = \Pagostt::generatePaymentCallback($pagostt_transaction->payment_code);
         $final_fields = array(
             "appkey" => config('pagostt.app_key'),
             "email_cliente" => $customer['email'],
-            "callback_url" => url('api/pago-confirmado/'.$pagostt_transaction->payment_code),
+            "callback_url" => $callback_url,
             "razon_social" => $customer['nit_name'],
             "nit" => $customer['nit_number'],
             "valor_envio" => 0,
@@ -101,6 +103,10 @@ class Pagostt {
         // URL para redireccionar
         $api_url = $decoded_result->url_pasarela_pagos;
         return $api_url;
+    }
+
+    public static function generatePaymentCallback($payment_code) {
+        return url('api/pago-confirmado/'.$payment_code)
     }
 
 }
