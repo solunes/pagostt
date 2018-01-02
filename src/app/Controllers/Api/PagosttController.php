@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller\Api;
 
 class PagosttController extends BaseController {
 
-    public function getCustomerPayments($app_key, $customer_id){
+    public function getCustomerPayments($app_key, $customer_id, $transaction_id = NULL){
         if($app_key==config('pagostt.app_key')){
             $customer = \PagosttBridge::getCustomer($customer_id, true, true);
             if($customer&&is_array($customer)){
@@ -20,6 +20,10 @@ class PagosttController extends BaseController {
                     foreach($pending_payment['items'] as $key => $item){
                         $new_item = json_decode($item, true);
                         $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer['id'], [$payment_id]);
+                        if($transaction_id){
+                            $pagostt_transaction->transaction_id = $transaction_id;
+                            $pagostt_transaction->save();
+                        }
                         $callback_url = \Pagostt::generatePaymentCallback($pagostt_transaction->payment_code);
                         $new_item['appkey_empresa_final'] = $app_key;
                         $new_item['call_back_url'] = $callback_url;
@@ -28,7 +32,7 @@ class PagosttController extends BaseController {
                         $final_pending_payments[$payment_id]['items'][$key] = $new_item;
                     }
                 }
-                return $this->response->array(['enabled'=>config('pagostt.customer_recurrent_payments'), 'app_key'=>$app_key, 'app_name'=>config('pagostt.app_name'), 'codigo_cliente'=>$customer_id, 'pagos_pendientes'=>$final_pending_payments])->setStatusCode(200);
+                return $this->response->array(['enabled'=>config('pagostt.customer_recurrent_payments'), 'app_key'=>$app_key, 'app_name'=>config('pagostt.app_name'), 'codigo_cliente'=>$customer_id, 'transaction_id'=>$transaction_id, 'pagos_pendientes'=>$final_pending_payments])->setStatusCode(200);
             } else {
                 throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('El cliente introducido no se encuentra.');
             }
