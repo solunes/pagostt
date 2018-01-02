@@ -106,11 +106,31 @@ class Pagostt {
     }
 
     public static function encrypt($plainTextToEncrypt) {
-        $newEncrypter = new \Illuminate\Encryption\Encrypter( config('pagostt.salt'), config( 'app.cipher' ) );
-        $encrypted = $newEncrypter->encrypt( $plainTextToEncrypt );
-        return $encrypted;
+        $secret_key = config('pagostt.salt');
+        $secret_iv = config('pagostt.secret_iv');
+          
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+        $key = hash( 'sha256', $secret_key );
+        $iv = substr( hash( 'sha256', $secret_iv ), 0, 16 );
+     
+        $output = base64_encode( openssl_encrypt( $plainTextToEncrypt, $encrypt_method, $key, 0, $iv ) );
+        return $output;
     }
     
+    public static function decrypt($textToDecrypt) {
+        $secret_key = config('pagostt.salt');
+        $secret_iv = config('pagostt.secret_iv');
+     
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+        $key = hash( 'sha256', $secret_key );
+        $iv = substr( hash( 'sha256', $secret_iv ), 0, 16 );
+     
+        $output = openssl_decrypt( base64_decode( $textToDecrypt ), $encrypt_method, $key, 0, $iv );
+        return $output;
+    }
+
     public static function generatePaymentCallback($payment_code) {
         return url('api/pago-confirmado/'.$payment_code);
     }
