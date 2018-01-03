@@ -132,8 +132,12 @@ class Pagostt {
         return $output;
     }
 
-    public static function generatePaymentCallback($payment_code) {
-        return url('api/pago-confirmado/'.$payment_code);
+    public static function generatePaymentCallback($payment_code, $transaction_id = NULL) {
+        $url = url('api/pago-confirmado/'.$payment_code);
+        if($transaction_id){
+            $url .= '/'.$transaction_id;
+        }
+        return $url;
     }
 
 }
