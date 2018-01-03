@@ -3,18 +3,11 @@
 return array(
 
 	// MENU
-	'pagostt' => 'Proyecto',
+	'pagostt' => 'PagosTT',
 
 	// CUSTOM TRANS
-	'closed' => 'Cerrado',
-	'finished' => 'Finalizado',
-	'not-detected' => 'No Encontrado',
-	'opened' => 'Abierto',
-	'partially-attended' => 'Parcialmente Atendido',
-	'paused' => 'Pausado',
-	'pagostt' => 'Proyecto',
-	'reopened' => 'Reabierto',
-	'started' => 'Iniciado',
-	'support' => 'Soporte',
+	'cancelled' => 'Cancelado',
+	'holding' => 'Pendiente',
+	'paid' => 'Pagado',
 
 );

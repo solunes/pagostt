@@ -9,19 +9,16 @@ return [
     |
     */
 
-    'default_task' => 'Tarea por Defecto',
-    'done' => '¿Realizado?',
-    'duty' => 'Tarea',
-    'finished' => '¿Finalizado?',
-    'porcentage' => 'Porcentaje de Avance',
-    'presentation_date' => 'Fecha de Presentación',
-    'priority' => 'Prioridad',
-    'pagostt' => 'Proyecto',
-    'pagostt_issue' => 'Observación de Proyecto',
-    'pagostt_task' => 'Tarea de Proyecto',
-    'pagostt_type' => 'Tipo de Proyecto',
-    'time' => 'Tiempo',
-    'time_hours' => 'Tiempo en Horas',
-    'wiki_type' => 'Tipo de Wiki',
+    'amount' => 'Monto',
+    'created_at' => 'Fecha de Creación',
+    'customer' => 'Cliente',
+    'id' => 'ID',
+    'parent' => 'Padre',
+    'payment' => 'Pago',
+    'payment_code' => 'Código de Pago',
+    'ptt_transaction_payments' => 'Pagos de Transacción',
+    'status' => 'Estado',
+    'transaction' => 'Transacción',
+    'updated_at' => 'Fecha de Actualización',
 
 ];
