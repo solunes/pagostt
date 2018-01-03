@@ -66,9 +66,6 @@ class PagosttController extends BaseController {
             }
             return redirect('');
             return $this->response->array(['payment_registered'=>$payment_registered])->setStatusCode(200);
-            } else {
-                throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Debe proporcionar los datos correctos para registrar un pago.');
-            } 
         } else {
             throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Operación no permitida.');
         }
