@@ -4,6 +4,7 @@ return array(
 
 	// MENU
 	'pagostt' => 'PagosTT',
+	'payments' => 'Pagos',
 
 	// CUSTOM TRANS
 	'cancelled' => 'Cancelado',

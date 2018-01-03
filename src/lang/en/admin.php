@@ -4,10 +4,11 @@ return array(
 
 	// MENU
 	'pagostt' => 'PagosTT',
+	'payments' => 'Payments',
 
 	// CUSTOM TRANS
-	'cancelled' => 'Cancelado',
-	'holding' => 'Pendiente',
-	'paid' => 'Pagado',
+	'cancelled' => 'Cancelled',
+	'holding' => 'Holding',
+	'paid' => 'Paid',
 
 );
