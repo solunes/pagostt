@@ -28,7 +28,7 @@ class PagosttController extends BaseController {
                         $new_item['appkey_empresa_final'] = $app_key;
                         $new_item['call_back_url'] = $callback_url;
                         $new_item = json_encode($new_item);
-                        $new_item = \Crypt::encrypt(config('pagostt.salt'));
+                        $new_item = \Pagostt::encrypt(config('pagostt.salt'));
                         $final_pending_payments[$payment_id]['items'][$key] = urlencode($new_item);
                     }
                 }

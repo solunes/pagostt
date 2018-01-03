@@ -32,6 +32,15 @@ class TestController extends Controller {
         return $response;
     }
 
+    public function getDecryptionTest($textoEncriptado) {
+        $response = '<strong>Comenzando la prueba...</strong>';
+        $decrypted = urldecode($textoEncriptado);
+        $response .= '<br><br><strong>Texto Decodeado:</strong> '.$decrypted;
+        $decrypted = \Pagostt::decrypt($decrypted);
+        $response .= '<br><br><strong>Texto Decifrado:</strong> '.$decrypted;
+        return $response;
+    }
+
 	public function getGeneralTest() {
         if(\App::environment('local')){
             $response = '<strong>Comenzando la prueba...</strong>';

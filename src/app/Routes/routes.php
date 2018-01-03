@@ -17,5 +17,6 @@ Route::group(['prefix'=>'pagostt'], function(){
 });
 
 Route::group(['prefix'=>'test'], function(){
-    Route::get('/encryption/{text?}', 'TestController@getEncryptionTest');
+    Route::get('/encryption/{text}', 'TestController@getEncryptionTest');
+    Route::get('/decryption/{text}', 'TestController@getDecryptionTest');
 });
