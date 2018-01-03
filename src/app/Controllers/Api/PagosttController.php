@@ -29,7 +29,7 @@ class PagosttController extends BaseController {
                         $new_item['call_back_url'] = $callback_url;
                         $new_item = json_encode($new_item);
                         $new_item = \Crypt::encrypt(config('pagostt.salt'));
-                        $final_pending_payments[$payment_id]['items'][$key] = $new_item;
+                        $final_pending_payments[$payment_id]['items'][$key] = urlencode($new_item);
                     }
                 }
                 return $this->response->array(['enabled'=>config('pagostt.customer_recurrent_payments'), 'app_key'=>$app_key, 'app_name'=>config('pagostt.app_name'), 'codigo_cliente'=>$customer_id, 'transaction_id'=>$transaction_id, 'pagos_pendientes'=>$final_pending_payments])->setStatusCode(200);
