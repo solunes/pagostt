@@ -27,7 +27,7 @@ class PagosttController extends BaseController {
                         $callback_url = \Pagostt::generatePaymentCallback($pagostt_transaction->payment_code, $transaction_id);
                         $new_item['appkey_empresa_final'] = $app_key;
                         $new_item['call_back_url'] = $callback_url;
-                        $new_item = json_encode($new_item);
+                        $new_item = json_encode($new_item, JSON_UNESCAPED_SLASHES);
                         $new_item = \Pagostt::encrypt($new_item);
                         $final_pending_payments[$payment_id]['items'][$key] = urlencode($new_item);
                     }
@@ -46,10 +46,11 @@ class PagosttController extends BaseController {
         \Log::info('transaction_id'.$transaction_id);
         \Log::info('input'.request()->input('transaction_id'));
         if($payment_code&&request()->has('transaction_id')){
+            $api_transaction = false;
             if($transaction_id&&$ptt_transaction = \Solunes\Pagostt\App\PttTransaction::where('payment_code',$payment_code)->where('transaction_id',$transaction_id)->where('status','holding')->first()){
-            
+                $api_transaction = true;
             } else if($ptt_transaction = \Solunes\Pagostt\App\PttTransaction::where('payment_code',$payment_code)->where('transaction_id',request()->input('transaction_id'))->where('status','holding')->first()){
-
+                $api_transaction = false;
             } else {
                 throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Pago no encontrado en verificación.');
             }
@@ -67,8 +68,11 @@ class PagosttController extends BaseController {
                     $m->to($customer['email'], $name)->subject(config('solunes.app_name').' | '.trans('pagostt::mail.successful_payment_title'));
                 });
             }
-            return redirect('');
-            return $this->response->array(['payment_registered'=>$payment_registered])->setStatusCode(200);
+            if($api_transaction){
+                return $this->response->array(['payment_registered'=>$payment_registered])->setStatusCode(200);
+            } else {
+                return redirect('');
+            }
         } else {
             throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Operación no permitida.');
         }
