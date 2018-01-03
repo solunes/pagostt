@@ -57,6 +57,7 @@ class PagosttController extends BaseController {
                     $m->to($customer['email'], $name)->subject(config('solunes.app_name').' | '.trans('pagostt::mail.successful_payment_title'));
                 });
             }
+            return redirect('');
             return $this->response->array(['payment_registered'=>$payment_registered])->setStatusCode(200);
         } else {
             throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Debe proporcionar los datos correctos para registrar un pago.');
