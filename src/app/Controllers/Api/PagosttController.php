@@ -24,7 +24,7 @@ class PagosttController extends BaseController {
                             $pagostt_transaction->transaction_id = $transaction_id;
                             $pagostt_transaction->save();
                         }
-                        $callback_url = \Pagostt::generatePaymentCallback($pagostt_transaction->payment_code);
+                        $callback_url = \Pagostt::generatePaymentCallback($pagostt_transaction->payment_code, $transaction_id);
                         $new_item['appkey_empresa_final'] = $app_key;
                         $new_item['call_back_url'] = $callback_url;
                         $new_item = json_encode($new_item);
