@@ -41,8 +41,15 @@ class PagosttController extends BaseController {
         } 
     }
 
-    public function getSuccessfulPayment($payment_code){
-        if(request()->has('transaction_id')&&$payment_code&&$ptt_transaction = \Solunes\Pagostt\App\PttTransaction::where('payment_code',$payment_code)->where('transaction_id',request()->input('transaction_id'))->where('status','holding')->first()){
+    public function getSuccessfulPayment($payment_code, $transaction_id = NULL){
+        if($payment_code&&request()->has('transaction_id')){
+            if($transaction_id&&$ptt_transaction = \Solunes\Pagostt\App\PttTransaction::where('payment_code',$payment_code)->where('transaction_id',$transaction_id)->where('status','holding')->first()){
+            
+            } else if($ptt_transaction = \Solunes\Pagostt\App\PttTransaction::where('payment_code',$payment_code)->where('transaction_id',request()->input('transaction_id'))->where('status','holding')->first()){
+
+            } else {
+                throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Pago no encontrado en verificación.');
+            }
             $ptt_transaction->status = 'confirmed';
             $ptt_transaction->save();
             $payment_registered = \PagosttBridge::transactionSuccesful($ptt_transaction);
@@ -59,9 +66,12 @@ class PagosttController extends BaseController {
             }
             return redirect('');
             return $this->response->array(['payment_registered'=>$payment_registered])->setStatusCode(200);
+            } else {
+                throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Debe proporcionar los datos correctos para registrar un pago.');
+            } 
         } else {
-            throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Debe proporcionar los datos correctos para registrar un pago.');
-        } 
+            throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Operación no permitida.');
+        }
     }
 
 }
