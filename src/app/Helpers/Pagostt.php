@@ -69,13 +69,8 @@ class Pagostt {
             "valor_envio" => 0,
             "descripcion_envio" => "Sin costo de envío",
         );
-        if($payment){
-            $final_fields['descripcion'] = $payment['name'];
-            $final_fields['lineas_detalle_deuda'] = $payment['items'];
-        } else {
-            $final_fields['descripcion'] = 'Múltiples Pagos';
-            $final_fields['lineas_detalle_deuda'] = $customer['pending_payments'];
-        }
+        $final_fields['descripcion'] = $payment['name'];
+        $final_fields['lineas_detalle_deuda'] = $payment['items'];
         return $final_fields;
     }
 

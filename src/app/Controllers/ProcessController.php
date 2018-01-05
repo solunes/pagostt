@@ -27,12 +27,17 @@ class ProcessController extends Controller {
 	    if($customer){
 	      $total_amount = 0;
 	      $payment_ids = [];
+	      $items = [];
 	      foreach($customer['pending_payments'] as $payment_id => $pending_payment){
 	      	$total_amount += $pending_payment['amount'];
 	      	$payment_ids[] = $payment_id;
+	      	foreach($pending_payment['items'] as $single_payment){
+	      		$items[] = $single_payment;
+	      	}
 	      }
+	      $payment = ['name'=>'Múltiples pagos', 'items'=>$items];
 	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $payment_ids, $total_amount);
-	      $final_fields = \Pagostt::generateTransactionArray($customer, NULL, $pagostt_transaction);
+	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      return redirect($api_url);
 	    } else {
