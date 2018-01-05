@@ -140,4 +140,37 @@ class Pagostt {
         return $url;
     }
 
+    public static function sendCustomerTo($url, $customer) {
+        $url .= '/api/customer/new';
+        
+        $final_fields = [];
+        $final_fields['app_key'] = config('pagostt.app_key');
+        $final_fields['email'] = $customer->email;
+        $final_fields['first_name'] = $customer->first_name;
+        $final_fields['last_name'] = $customer->last_name;
+        $final_fields['ci_number'] = $customer->ci_number;
+        $final_fields['ci_expedition'] = $customer->ci_expedition;
+        $final_fields['member_code'] = $customer->member_code;
+        $final_fields['phone'] = $customer->phone;
+        $final_fields['address'] = $customer->address;
+        $final_fields['nit_number'] = $customer->nit_number;
+        $final_fields['nit_name'] = $customer->nit_name;
+        $final_fields['birth_date'] = $customer->birth_date;
+
+        $ch = curl_init();
+        $options = array(
+            CURLOPT_URL            => $url,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => json_encode($final_fields),
+            CURLOPT_RETURNTRANSFER => true,
+        );
+        curl_setopt_array($ch, $options);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+
+
+        return $result;
+    }
+
 }
