@@ -38,7 +38,7 @@ class ProcessController extends Controller {
     	$customer = \PagosttBridge::getCustomer($customer_id, false, false);
     	$payment = \PagosttBridge::getPayment($payment_id);
 	    if($customer&&$payment){
-	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, [$payment_id], $customer['amount']);
+	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, [$payment_id], $payment['amount']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      return redirect($api_url);
