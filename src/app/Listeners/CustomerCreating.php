@@ -23,7 +23,7 @@ class CustomerCreating {
         $event->user_id = $user->id;
 
         // Enviar a Cuentas365
-        if(!config('pagostt.is_cuentas365')){
+        if(config('pagostt.is_cuentas365')===false){
             \Pagostt::sendCustomerTo('http://cuentas365.test', $event);
         }
         return $event;

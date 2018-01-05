@@ -156,7 +156,7 @@ class Pagostt {
         $options = array(
             CURLOPT_URL            => $url,
             CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => json_encode($final_fields),
+            CURLOPT_POSTFIELDS     => $final_fields,
             CURLOPT_RETURNTRANSFER => true,
         );
         curl_setopt_array($ch, $options);
