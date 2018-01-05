@@ -19,7 +19,7 @@ class PagosttController extends BaseController {
                     $final_pending_payments[$payment_id] = $pending_payment;
                     foreach($pending_payment['items'] as $key => $item){
                         $new_item = json_decode($item, true);
-                        $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer['id'], [$payment_id], $customer['amount']);
+                        $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer['id'], [$payment_id], $pending_payment['amount']);
                         if($transaction_id){
                             $pagostt_transaction->transaction_id = $transaction_id;
                             $pagostt_transaction->save();
