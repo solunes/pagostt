@@ -39,7 +39,11 @@ class ProcessController extends Controller {
 	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $payment_ids, $total_amount);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
-	      return redirect($api_url);
+	      if($api_url){
+	      	return redirect($api_url);
+	      } else {
+	      	return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago en PagosTT.');
+	      }
 	    } else {
 	      return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago.');
 	    }
@@ -52,7 +56,11 @@ class ProcessController extends Controller {
 	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, [$payment_id], $payment['amount']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
-	      return redirect($api_url);
+	      if($api_url){
+	      	return redirect($api_url);
+	      } else {
+	      	return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago en PagosTT.');
+	      }
 	    } else {
 	      return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago.');
 	    }

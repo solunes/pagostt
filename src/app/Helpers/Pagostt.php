@@ -91,6 +91,10 @@ class Pagostt {
         // Decodificar resultado
         $decoded_result = json_decode($result);
         
+        if(!isset($decoded_result->url_pasarela_pagos)){
+            return NULL;
+        }
+
         // Guardado de transaction_id generado por PagosTT
         $transaction_id = $decoded_result->id_transaccion;
         $pagostt_payment->transaction_id = $transaction_id;
