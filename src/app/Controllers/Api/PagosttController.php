@@ -42,9 +42,6 @@ class PagosttController extends BaseController {
     }
 
     public function getSuccessfulPayment($payment_code, $transaction_id = NULL){
-        \Log::info('PaymentCode'.$payment_code);
-        \Log::info('transaction_id'.$transaction_id);
-        \Log::info('input'.request()->input('transaction_id'));
         if($payment_code&&request()->has('transaction_id')){
             $api_transaction = false;
             if($transaction_id&&$ptt_transaction = \Solunes\Pagostt\App\PttTransaction::where('payment_code',$payment_code)->where('transaction_id',$transaction_id)->where('status','holding')->first()){
