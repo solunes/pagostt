@@ -130,7 +130,7 @@ class Pagostt {
     public static function generatePaymentCallback($payment_code, $transaction_id = NULL) {
         $url = url('api/pago-confirmado/'.$payment_code);
         if($transaction_id){
-            $url .= '/'.$transaction_id;
+            $url .= '/'.$transaction_id.'?transaction_id='.$transaction_id;
         }
         return $url;
     }
