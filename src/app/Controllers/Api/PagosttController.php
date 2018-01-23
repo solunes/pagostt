@@ -51,7 +51,7 @@ class PagosttController extends BaseController {
             } else {
                 throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Pago no encontrado en verificación.');
             }
-            $ptt_transaction->status = 'confirmed';
+            $ptt_transaction->status = 'paid';
             $ptt_transaction->save();
             $payment_registered = \PagosttBridge::transactionSuccesful($ptt_transaction);
             if(config('pagostt.notify_email')){
