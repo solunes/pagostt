@@ -11,6 +11,43 @@ class Pagostt {
         return $token;
     }
 
+    public static function putInoviceParameters($ptt_transaction) {
+        $save = false;
+        if(request()->has('nit_company')){
+            $ptt_transaction->nit_company = request()->input('nit_company');
+            $save = true;
+        }
+        if(request()->has('invoice_number')){
+            $ptt_transaction->invoice_number = request()->input('invoice_number');
+            $save = true;
+        }
+        if(request()->has('auth_number')){
+            $ptt_transaction->auth_number = request()->input('auth_number');
+            $save = true;
+        }
+        if(request()->has('control_code')){
+            $ptt_transaction->control_code = request()->input('control_code');
+            $save = true;
+        }
+        if(request()->has('customer_name')){
+            $ptt_transaction->customer_name = request()->input('customer_name');
+            $save = true;
+        }
+        if(request()->has('customer_nit')){
+            $ptt_transaction->customer_nit = request()->input('customer_nit');
+            $save = true;
+        }
+        if(request()->has('invoice_type')){
+            $ptt_transaction->invoice_type = request()->input('invoice_type');
+            $save = true;
+        }
+        if(request()->has('invoice_id')){
+            $ptt_transaction->invoice_id = request()->input('invoice_id');
+            $save = true;
+        }
+        return ['ptt_transaction'=>$ptt_transaction,'save'=>$save];
+    }
+
     public static function generatePaymentItem($concept, $quantity, $cost, $invoice = true) {
         $item = [];
         $item['concepto'] = $concept;

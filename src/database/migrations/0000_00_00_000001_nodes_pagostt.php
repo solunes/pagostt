@@ -18,6 +18,13 @@ class NodesPagostt extends Migration
             $table->string('customer_id')->nullable();
             $table->string('payment_code')->nullable();
             $table->string('invoice_id')->nullable();
+            $table->string('nit_company')->nullable();
+            $table->string('invoice_number')->nullable();
+            $table->string('auth_number')->nullable();
+            $table->string('control_code')->nullable();
+            $table->string('customer_name')->nullable();
+            $table->string('customer_nit')->nullable();
+            $table->enum('invoice_type', ['E','C'])->nullable();
             $table->string('transaction_id')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
             $table->enum('status', ['holding','paid','cancelled'])->default('holding');

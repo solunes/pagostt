@@ -49,8 +49,9 @@ class PagosttController extends BaseController {
             } else if($ptt_transaction = \Solunes\Pagostt\App\PttTransaction::where('payment_code',$payment_code)->where('transaction_id',request()->input('transaction_id'))->where('status','holding')->first()){
                 $api_transaction = false;
             } else if($ptt_transaction = \Solunes\Pagostt\App\PttTransaction::where('payment_code',$payment_code)->where('transaction_id',request()->input('transaction_id'))->where('status','paid')->first()){
-                if(request()->has('invoice_id')){
-                    $ptt_transaction->invoice_id = request()->input('invoice_id');
+                $putInoviceParameters = \Pagostt::putInoviceParameters($ptt_transaction);
+                $ptt_transaction = $putInoviceParameters['ptt_transaction'];
+                if($putInoviceParameters['save']){
                     $ptt_transaction->save();
                 }
                 return redirect('admin/my-payments')->with('message_success', 'Su pago fue realizado correctamente');
@@ -59,9 +60,8 @@ class PagosttController extends BaseController {
             } else {
                 throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException('Pago no encontrado en verificación.');
             }
-            if(request()->has('invoice_id')){
-                $ptt_transaction->invoice_id = request()->input('invoice_id');
-            }
+            $putInoviceParameters = \Pagostt::putInoviceParameters($ptt_transaction);
+            $ptt_transaction = $putInoviceParameters['ptt_transaction'];
             $ptt_transaction->status = 'paid';
             $ptt_transaction->save();
             $payment_registered = \PagosttBridge::transactionSuccesful($ptt_transaction);
