@@ -7,8 +7,8 @@ return array(
 	'payments' => 'Payments',
 
 	// CUSTOM TRANS
-	'e' => 'Electrónica',
-	'c' => 'Ciclos',
+	'E' => 'Electrónica',
+	'C' => 'Ciclos',
 	'cancelled' => 'Cancelled',
 	'holding' => 'Holding',
 	'paid' => 'Paid',
