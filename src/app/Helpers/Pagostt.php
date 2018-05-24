@@ -14,7 +14,7 @@ class Pagostt {
     public static function putInoviceParameters($ptt_transaction) {
         $save = false;
         if(request()->has('nit_company')){
-            $ptt_transaction->nit_company = request()->input('nit_company');
+            $ptt_transaction->nit_company = urldecode(request()->input('nit_company'));
             $save = true;
         }
         if(request()->has('invoice_number')){
@@ -26,11 +26,11 @@ class Pagostt {
             $save = true;
         }
         if(request()->has('control_code')){
-            $ptt_transaction->control_code = request()->input('control_code');
+            $ptt_transaction->control_code = urldecode(request()->input('control_code'));
             $save = true;
         }
         if(request()->has('customer_name')){
-            $ptt_transaction->customer_name = request()->input('customer_name');
+            $ptt_transaction->customer_name = urldecode(request()->input('customer_name'));
             $save = true;
         }
         if(request()->has('customer_nit')){
