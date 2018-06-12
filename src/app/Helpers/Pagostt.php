@@ -129,6 +129,7 @@ class Pagostt {
         $decoded_result = json_decode($result);
         
         if(!isset($decoded_result->url_pasarela_pagos)){
+            \Log::info('Error al realizar pago: '.json_encode($decoded_result));
             return NULL;
         }
 
