@@ -26,7 +26,7 @@ class ProcessController extends Controller {
         if(config('pagostt.enable_bridge')){
             $customer = \PagosttBridge::getCustomer($customer_id, true, false);
         } else {
-            $customer = \Pagostt::getCustomer($customer_id, true, false);
+            $customer = \Customer::getCustomer($customer_id, true, false);
         }
 	    if($customer){
 	      $total_amount = 0;
@@ -58,8 +58,8 @@ class ProcessController extends Controller {
             $customer = \PagosttBridge::getCustomer($customer_id, false, false);
     		$payment = \PagosttBridge::getPayment($payment_id);
         } else {
-            $customer = \Pagostt::getCustomer($customer_id, false, false);
-    		$payment = \Pagostt::getPayment($payment_id);
+            $customer = \Customer::getCustomer($customer_id, false, false);
+    		$payment = \Customer::getPayment($payment_id);
         }
 	    if($customer&&$payment){
 	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, [$payment_id], $payment['amount']);
