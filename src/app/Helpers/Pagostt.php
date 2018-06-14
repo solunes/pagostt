@@ -103,9 +103,27 @@ class Pagostt {
             "callback_url" => $callback_url,
             "razon_social" => $customer['nit_name'],
             "nit" => $customer['nit_number'],
-            "valor_envio" => 0,
-            "descripcion_envio" => "Sin costo de envío",
         );
+        if(isset($payment['ci_number'])){
+            $final_fields['ci'] = $payment['ci_number'];
+        }
+        if(isset($payment['first_name'])){
+            $final_fields['nombre_cliente'] = $payment['first_name'];
+        }
+        if(isset($payment['last_name'])){
+            $final_fields['apellido_cliente'] = $payment['last_name'];
+        }
+        if(isset($payment['shipping_amount'])){
+            $final_fields['valor_envio'] = $payment['shipping_amount'];
+        } else {
+            $final_fields['valor_envio'] = 0;
+        }
+        if(isset($payment['shipping_detail'])){
+            $final_fields['descripcion_envio'] = $payment['shipping_detail'];
+        } else {
+            $final_fields['descripcion_envio'] = "Costo de envío no definido.";
+
+        }
         $final_fields['descripcion'] = $payment['name'];
         $final_fields['lineas_detalle_deuda'] = $payment['items'];
         return $final_fields;
@@ -129,7 +147,7 @@ class Pagostt {
         $decoded_result = json_decode($result);
         
         if(!isset($decoded_result->url_pasarela_pagos)){
-            \Log::info('Error al realizar pago: '.json_encode($decoded_result));
+            \Log::info('Error en PagosTT: '.json_encode($decoded_result));
             return NULL;
         }
 

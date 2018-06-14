@@ -11,7 +11,11 @@ class PagosttController extends BaseController {
 
     public function getCustomerPayments($app_key, $customer_id, $transaction_id = NULL){
         if($app_key==config('pagostt.app_key')){
-            $customer = \PagosttBridge::getCustomer($customer_id, true, true);
+            if(config('pagostt.enable_bridge')){
+                $customer = \PagosttBridge::getCustomer($customer_id, true, true);
+            } else {
+                $customer = \Pagostt::getCustomer($customer_id, true, true);
+            }
             if($customer&&is_array($customer)){
                 $pending_payments = $customer['pending_payments'];
                 $final_pending_payments = [];
@@ -64,9 +68,17 @@ class PagosttController extends BaseController {
             $ptt_transaction = $putInoviceParameters['ptt_transaction'];
             $ptt_transaction->status = 'paid';
             $ptt_transaction->save();
-            $payment_registered = \PagosttBridge::transactionSuccesful($ptt_transaction);
+            if(config('pagostt.enable_bridge')){
+                $payment_registered = \PagosttBridge::transactionSuccesful($ptt_transaction);
+            } else {
+                $payment_registered = \Pagostt::transactionSuccesful($ptt_transaction);
+            }
             if(config('pagostt.notify_email')){
-                $customer = \PagosttBridge::getCustomer($ptt_transaction->customer_id);
+                if(config('pagostt.enable_bridge')){
+                    $customer = \PagosttBridge::getCustomer($ptt_transaction->customer_id);
+                } else {
+                    $customer = \Pagostt::getCustomer($ptt_transaction->customer_id);
+                }
                 \Mail::send('pagostt::emails.successful-payment', ['amount'=>$ptt_transaction->amount, 'email'=>$customer['email']], function($m) use($customer) {
                     if($customer['name']){
                         $name = $customer['name'];

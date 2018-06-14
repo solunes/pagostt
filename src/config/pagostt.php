@@ -9,6 +9,8 @@ return [
 	'app_key' => 'c26d8c99-8836-4cd5-a850-230c9d3fbf3c', // AppKey generado por PagosTT
 	'invoice_server' => 'http://www.todotix.com:7777/factura/', // Servidor donde se almacenan las facturas, pegado al Invoice ID
 	'notify_email' => true, // Notificar la recepción del pago por correo electrónico
+	'enable_bridge' => false, // Habilitar si no se utilizarán los módulos de pagos de Solunes
+	'customer_all_payments' => true, // Habilitar si se desea aceptar pagos en masa
 	'customer_recurrent_payments' => false, // Habilitar si se desea integrar a Cuentas365
 	'is_cuentas365' => false, // Habilitar la plataforma es Cuentas365
 
