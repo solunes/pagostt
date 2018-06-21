@@ -95,10 +95,15 @@ class Pagostt {
         return $full_token;
     }
 
-    public static function generateTransactionArray($customer, $payment, $pagostt_transaction) {
+    public static function generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key = NULL) {
         $callback_url = \Pagostt::generatePaymentCallback($pagostt_transaction->payment_code);
+        if($custom_app_key&&config('pagostt.custom_app_keys.'.$custom_app_key)){
+            $app_key = config('pagostt.custom_app_keys.'.$custom_app_key);
+        } else {
+            $app_key = config('pagostt.app_key');
+        }
         $final_fields = array(
-            "appkey" => config('pagostt.app_key'),
+            "appkey" => $app_key,
             "email_cliente" => $customer['email'],
             "callback_url" => $callback_url,
             "razon_social" => $customer['nit_name'],

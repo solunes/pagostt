@@ -10,11 +10,11 @@ use App\Http\Controllers\Controller\Api;
 class PagosttController extends BaseController {
 
     public function getCustomerPayments($app_key, $customer_id, $transaction_id = NULL){
-        if($app_key==config('pagostt.app_key')){
+        if($app_key==config('pagostt.app_key')||in_array($app_key, config('pagostt.custom_app_keys'), true)){
             if(config('pagostt.enable_bridge')){
-                $customer = \PagosttBridge::getCustomer($customer_id, true, true);
+                $customer = \PagosttBridge::getCustomer($customer_id, true, true, $app_key);
             } else {
-                $customer = \Customer::getCustomer($customer_id, true, true);
+                $customer = \Customer::getCustomer($customer_id, true, true, $app_key);
             }
             if($customer&&is_array($customer)){
                 $pending_payments = $customer['pending_payments'];

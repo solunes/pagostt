@@ -22,11 +22,11 @@ class ProcessController extends Controller {
 	  $this->prev = $url->previous();
 	}
 
-    public function getMakeAllPayments($customer_id) {
+    public function getMakeAllPayments($customer_id, $custom_app_key = NULL) {
         if(config('pagostt.enable_bridge')){
-            $customer = \PagosttBridge::getCustomer($customer_id, true, false);
+            $customer = \PagosttBridge::getCustomer($customer_id, true, false, $custom_app_key);
         } else {
-            $customer = \Customer::getCustomer($customer_id, true, false);
+            $customer = \Customer::getCustomer($customer_id, true, false, $custom_app_key);
         }
 	    if($customer){
 	      $total_amount = 0;
@@ -41,7 +41,7 @@ class ProcessController extends Controller {
 	      }
 	      $payment = ['name'=>'Múltiples pagos', 'items'=>$items];
 	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $payment_ids, $total_amount);
-	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction);
+	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      if($api_url){
 	      	return redirect($api_url);
@@ -53,17 +53,17 @@ class ProcessController extends Controller {
 	    }
     }
 
-    public function getMakeSinglePayment($customer_id, $payment_id) {
+    public function getMakeSinglePayment($customer_id, $payment_id, $custom_app_key = NULL) {
         if(config('pagostt.enable_bridge')){
-            $customer = \PagosttBridge::getCustomer($customer_id, false, false);
-    		$payment = \PagosttBridge::getPayment($payment_id);
+            $customer = \PagosttBridge::getCustomer($customer_id, false, false, $custom_app_key);
+    		$payment = \PagosttBridge::getPayment($payment_id, $custom_app_key);
         } else {
-            $customer = \Customer::getCustomer($customer_id, false, false);
-    		$payment = \Customer::getPayment($payment_id);
+            $customer = \Customer::getCustomer($customer_id, false, false, $custom_app_key);
+    		$payment = \Customer::getPayment($payment_id, $custom_app_key);
         }
 	    if($customer&&$payment){
 	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, [$payment_id], $payment['amount']);
-	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction);
+	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      if($api_url){
 	      	return redirect($api_url);
