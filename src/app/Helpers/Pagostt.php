@@ -53,7 +53,9 @@ class Pagostt {
         $item['concepto'] = $concept;
         $item['cantidad'] = $quantity;
         $item['costo_unitario'] = $cost;
-        $item['factura_independiente'] = $invoice;
+        if($invoice==false){
+            $item['ignorar_factura'] = $invoice;
+        }
         $encoded_item = json_encode($item);
         return $encoded_item;
     }
@@ -137,6 +139,9 @@ class Pagostt {
         }
         $final_fields['descripcion'] = $payment['name'];
         $final_fields['lineas_detalle_deuda'] = $payment['items'];
+        if($payment['metadata']){
+            $final_fields['lineas_metadatos'] = $payment['metadata'];
+        }
         return $final_fields;
     }
 
