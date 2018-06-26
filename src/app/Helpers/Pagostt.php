@@ -109,14 +109,17 @@ class Pagostt {
             "razon_social" => $customer['nit_name'],
             "nit" => $customer['nit_number'],
         );
-        if(isset($payment['ci_number'])){
-            $final_fields['ci'] = $payment['ci_number'];
+        if(isset($customer['ci_number'])){
+            $final_fields['ci'] = $customer['ci_number'];
         }
-        if(isset($payment['first_name'])){
-            $final_fields['nombre_cliente'] = $payment['first_name'];
+        if(isset($customer['first_name'])){
+            $final_fields['nombre_cliente'] = $customer['first_name'];
         }
-        if(isset($payment['last_name'])){
-            $final_fields['apellido_cliente'] = $payment['last_name'];
+        if(isset($customer['last_name'])){
+            $final_fields['apellido_cliente'] = $customer['last_name'];
+        }
+        if(isset($payment['has_invoice'])){
+            $final_fields['emite_factura'] = $payment['has_invoice'];
         }
         if(isset($payment['shipping_amount'])){
             $final_fields['valor_envio'] = $payment['shipping_amount'];
