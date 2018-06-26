@@ -169,6 +169,20 @@ class Pagostt {
         return $api_url;
     }
 
+    public static function calculateMultiplePayments($payments_array, $amount = 0) {
+        $total_amount = 0;
+        $payment_ids = [];
+        $items = [];
+        foreach($payments_array as $payment_id => $pending_payment){
+            $total_amount += $pending_payment['amount'];
+            $payment_ids[] = $payment_id;
+            foreach($pending_payment['items'] as $single_payment){
+                $items[] = $single_payment;
+            }
+        }
+        return ['items'=>$items, 'payment_ids'=>$payment_ids, 'total_amount'=>$amount];
+    }
+
     public static function encrypt($plainTextToEncrypt) {
         $secret_key = config('pagostt.salt');
         $secret_iv = config('pagostt.secret_iv');

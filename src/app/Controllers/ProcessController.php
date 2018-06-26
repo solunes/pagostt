@@ -29,18 +29,9 @@ class ProcessController extends Controller {
             $customer = \Customer::getCustomer($customer_id, true, false, $custom_app_key);
         }
 	    if($customer){
-	      $total_amount = 0;
-	      $payment_ids = [];
-	      $items = [];
-	      foreach($customer['pending_payments'] as $payment_id => $pending_payment){
-	      	$total_amount += $pending_payment['amount'];
-	      	$payment_ids[] = $payment_id;
-	      	foreach($pending_payment['items'] as $single_payment){
-	      		$items[] = $single_payment;
-	      	}
-	      }
-	      $payment = ['name'=>'Múltiples pagos', 'items'=>$items];
-	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $payment_ids, $total_amount);
+	      $calc_array = \Pagostt::calculateMultiplePayments($customer['pending_payments']); // Returns items, payment_ids and amount.
+	      $payment = ['name'=>'Múltiples pagos', 'items'=>$calc_array['items']];
+	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $calc_array['payment_ids'], $calc_array['total_amount']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      if($api_url){
@@ -76,8 +67,9 @@ class ProcessController extends Controller {
     }
 
     public function postMakeCheckboxPayment(Request $request) {
-        $company = $request->input('company');
-        $payments_array = $request->input('check_'.$company);
+        $custom_app_key = $request->input('custom_app_key');
+        $customer_id = $request->input('customer_id');
+        $payments_array = $request->input('check');
         if(config('pagostt.enable_bridge')){
             $customer = \PagosttBridge::getCustomer($customer_id, true, false, $custom_app_key);
             $payments = \PagosttBridge::getCheckboxPayments($customer_id, $payments_array, $custom_app_key);
@@ -86,9 +78,9 @@ class ProcessController extends Controller {
             $payments = \Customer::getCheckboxPayments($customer_id, $payments_array, $custom_app_key);
         }
 	    if($customer&&count($payments)>0){
-	      $total_amount = 0;
-	      $payment = ['name'=>'Múltiples pagos seleccionados', 'items'=>$payments];
-	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $payment_ids, $total_amount);
+	      $calc_array = \Pagostt::calculateMultiplePayments($payments); // Returns items, payment_ids and amount.
+	      $payment = ['name'=>'Múltiples pagos seleccionados', 'items'=>$calc_array['items']];
+	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $calc_array['payment_ids'], $calc_array['total_amount']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      if($api_url){
