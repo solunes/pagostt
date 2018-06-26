@@ -60,6 +60,14 @@ class Pagostt {
         return $encoded_item;
     }
 
+    public static function generatePaymentMetadata($nombre, $dato) {
+        $item = [];
+        $item['nombre'] = $nombre;
+        $item['dato'] = $dato;
+        $encoded_item = json_encode($item);
+        return $encoded_item;
+    }
+
     public static function generatePaymentTransaction($customer_id, $payment_ids, $amount = NULL) {
         $payment_code = \Pagostt::generatePaymentCode();
         $pagostt_transaction = new \Solunes\Pagostt\App\PttTransaction;
