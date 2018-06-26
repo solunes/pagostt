@@ -75,4 +75,29 @@ class ProcessController extends Controller {
 	    }
     }
 
+    public function postMakeCheckboxPayment(Request $request) {
+        $company = $request->input('company');
+        $payments_array = $request->input('check_'.$company);
+        if(config('pagostt.enable_bridge')){
+            $customer = \PagosttBridge::getCustomer($customer_id, true, false, $custom_app_key);
+            $payments = \PagosttBridge::getCheckboxPayments($customer_id, $payments_array, $custom_app_key);
+        } else {
+            $customer = \Customer::getCustomer($customer_id, true, false, $custom_app_key);
+            $payments = \Customer::getCheckboxPayments($customer_id, $payments_array, $custom_app_key);
+        }
+	    if($customer&&count($payments)>0){
+	      $total_amount = 0;
+	      $payment = ['name'=>'Múltiples pagos seleccionados', 'items'=>$payments];
+	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $payment_ids, $total_amount);
+	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
+	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
+	      if($api_url){
+	      	return redirect($api_url);
+	      } else {
+	      	return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago en PagosTT.');
+	      }
+        } else {
+	      return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago.');
+        }
+    }
 }

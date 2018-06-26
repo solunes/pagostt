@@ -14,6 +14,7 @@
 Route::group(['prefix'=>'pagostt'], function(){
     Route::get('/make-all-payments/{customer_id}/{custom_app_key?}', 'ProcessController@getMakeAllPayments');
     Route::get('/make-single-payment/{customer_id}/{payment_id}/{custom_app_key?}', 'ProcessController@getMakeSinglePayment');
+    Route::post('/make-checkbox-payment', 'ProcessController@postMakeCheckboxPayment');
 });
 
 Route::group(['prefix'=>'test'], function(){
