@@ -54,7 +54,7 @@ class Pagostt {
         $item['cantidad'] = $quantity;
         $item['costo_unitario'] = $cost;
         if($invoice==false){
-            $item['ignorar_factura'] = $invoice;
+            $item['ignorar_factura'] = true;
         }
         $encoded_item = json_encode($item);
         return $encoded_item;
@@ -147,7 +147,7 @@ class Pagostt {
         }
         $final_fields['descripcion'] = $payment['name'];
         $final_fields['lineas_detalle_deuda'] = $payment['items'];
-        if($payment['metadata']){
+        if(isset($payment['metadata'])){
             $final_fields['lineas_metadatos'] = $payment['metadata'];
         }
         return $final_fields;
