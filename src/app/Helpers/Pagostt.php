@@ -102,6 +102,9 @@ class Pagostt {
         } else {
             $app_key = config('pagostt.app_key');
         }
+        if(config('pagostt.finish_payment_verification')){
+            $payment = \PagosttBridge::finishPaymentVerification($payment);
+        }
         $final_fields = array(
             "appkey" => $app_key,
             "email_cliente" => $customer['email'],
