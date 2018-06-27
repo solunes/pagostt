@@ -113,7 +113,7 @@ class Pagostt {
             $app_key = config('pagostt.app_key');
         }
         if(config('pagostt.finish_payment_verification')){
-            $payment = \PagosttBridge::finishPaymentVerification($payment);
+            $payment = \PagosttBridge::finishPaymentVerification($payment, $pagostt_transaction);
         }
         $final_fields = array(
             "appkey" => $app_key,
