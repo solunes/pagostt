@@ -12,6 +12,7 @@ return [
 	'invoice_server' => 'http://www.todotix.com:7777/factura/', // Servidor donde se almacenan las facturas, pegado al Invoice ID
 	'notify_email' => true, // Notificar la recepción del pago por correo electrónico
 	'enable_bridge' => false, // Habilitar si no se utilizarán los módulos de pagos de Solunes
+	'enable_cycle' => false, // Habilitar la facturación por ciclos
 	'finish_payment_verification' => false, // Habilitar si se desea realizar la verificación final
 	'customer_all_payments' => true, // Habilitar si se desea aceptar pagos en masa
 	'customer_recurrent_payments' => false, // Habilitar si se desea integrar a Cuentas365

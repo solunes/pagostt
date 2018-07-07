@@ -30,7 +30,7 @@ class NodesPagostt extends Migration
             $table->enum('status', ['holding','paid','cancelled'])->default('holding');
             $table->timestamps();
         });
-        if(config('pagostt.cycle')){
+        if(config('pagostt.enable_cycle')){
             Schema::table('ptt_transactions', function (Blueprint $table) {
                 $table->string('billing_cycle_dosage')->nullable();
                 $table->string('billing_cycle_start_date')->nullable();

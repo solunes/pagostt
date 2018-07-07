@@ -45,7 +45,7 @@ class Pagostt {
             $ptt_transaction->invoice_id = request()->input('invoice_id');
             $save = true;
         }
-        if(config('pagostt.cycle')&&$ptt_transaction->invoice_type=='C'){
+        if(config('pagostt.enable_cycle')&&$ptt_transaction->invoice_type=='C'){
             if(request()->has('billing_cycle_dosage')){
                 $dosage_decrypt = \Pagostt::pagosttDecrypt(request()->input('billing_cycle_dosage'));
                 $ptt_transaction->billing_cycle_dosage = $dosage_decrypt;
