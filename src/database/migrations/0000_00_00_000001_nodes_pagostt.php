@@ -30,6 +30,18 @@ class NodesPagostt extends Migration
             $table->enum('status', ['holding','paid','cancelled'])->default('holding');
             $table->timestamps();
         });
+        if(config('pagostt.cycle')){
+            Schema::table('ptt_transactions', function (Blueprint $table) {
+                $table->string('billing_cycle_dosage')->nullable();
+                $table->string('billing_cycle_start_date')->nullable();
+                $table->string('billing_cycle_end_date')->nullable();
+                $table->string('billing_cycle_eticket')->nullable();
+                $table->string('billing_cycle_legend')->nullable();
+                $table->string('billing_cycle_parallel')->nullable();
+                $table->string('billing_cycle_invoice_title')->nullable();
+                $table->string('company_code')->nullable();
+            });
+        }
         Schema::create('ptt_transaction_payments', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('parent_id')->nullable();

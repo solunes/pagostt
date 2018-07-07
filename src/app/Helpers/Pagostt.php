@@ -45,6 +45,41 @@ class Pagostt {
             $ptt_transaction->invoice_id = request()->input('invoice_id');
             $save = true;
         }
+        if(config('pagostt.cycle')&&$ptt_transaction->invoice_type=='C'){
+            if(request()->has('billing_cycle_dosage')){
+                $dosage_decrypt = \Pagostt::pagosttDecrypt(request()->input('billing_cycle_dosage'));
+                $ptt_transaction->billing_cycle_dosage = $dosage_decrypt;
+                $save = true;
+            }
+            if(request()->has('billing_cycle_start_date')){
+                $ptt_transaction->billing_cycle_start_date = request()->input('billing_cycle_start_date');
+                $save = true;
+            }
+            if(request()->has('billing_cycle_end_date')){
+                $ptt_transaction->billing_cycle_end_date = request()->input('billing_cycle_end_date');
+                $save = true;
+            }
+            if(request()->has('billing_cycle_eticket')){
+                $ptt_transaction->billing_cycle_eticket = request()->input('billing_cycle_eticket');
+                $save = true;
+            }
+            if(request()->has('billing_cycle_legend')){
+                $ptt_transaction->billing_cycle_legend = request()->input('billing_cycle_legend');
+                $save = true;
+            }
+            if(request()->has('billing_cycle_parallel')){
+                $ptt_transaction->billing_cycle_parallel = request()->input('billing_cycle_parallel');
+                $save = true;
+            }
+            if(request()->has('billing_cycle_invoice_title')){
+                $ptt_transaction->billing_cycle_invoice_title = request()->input('billing_cycle_invoice_title');
+                $save = true;
+            }
+            if(request()->has('company_code')){
+                $ptt_transaction->company_code = request()->input('company_code');
+                $save = true;
+            }
+        }
         return ['ptt_transaction'=>$ptt_transaction,'save'=>$save];
     }
 
@@ -223,6 +258,35 @@ class Pagostt {
      
         $output = openssl_decrypt( base64_decode( $textToDecrypt ), $encrypt_method, $key, 0, $iv );
         return $output;
+    }
+
+    public static function pagosttEncrypt($plainTextToEncrypt) {
+        $key = config('pagostt.secret_pagostt_iv');
+        $ivArray=array( 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF  );
+        $iv=null;
+        $block = mcrypt_get_block_size('des', 'cbc');
+        $pad = $block - (strlen($plainTextToEncrypt) % $block);
+        $plainTextToEncrypt .= str_repeat(chr($pad), $pad);
+        foreach ($ivArray as $element){
+            $iv.=CHR($element);
+        }
+        $encrypted_string = mcrypt_encrypt(MCRYPT_DES, $key, $plainTextToEncrypt, MCRYPT_MODE_CBC, $iv);
+        return strtr(base64_encode($encrypted_string), '+/=', '._-');
+    }
+
+    public static function pagosttDecrypt($plainTextToDecrypt) {
+        $key = config('pagostt.secret_pagostt_iv');
+        $ivArray=array( 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF  );
+        $iv=null;
+        foreach ($ivArray as $element){
+            $iv.=CHR($element);
+        }
+        $plainTextToDecrypt = base64_decode(strtr($plainTextToDecrypt, '._-', '+/='));
+        $decrypted_string = mcrypt_decrypt(MCRYPT_DES, $key, $plainTextToDecrypt, MCRYPT_MODE_CBC, $iv);
+        $block = mcrypt_get_block_size('des', 'cbc');
+        $pad = ord($decrypted_string[strlen($decrypted_string)-1]);
+        $response = substr($decrypted_string, 0, strlen($decrypted_string) - $pad);
+        return $response;
     }
 
     public static function generatePaymentCallback($payment_code, $transaction_id = NULL) {
