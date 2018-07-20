@@ -30,7 +30,8 @@ class ProcessController extends Controller {
         }
 	    if($customer){
 	      $calc_array = \Pagostt::calculateMultiplePayments($customer['pending_payments']); // Returns items, payment_ids and amount.
-	      $payment = ['name'=>'Múltiples pagos', 'items'=>$calc_array['items']];
+	      $payment = $customer['payment'];
+	      $payment['items'] = $calc_array['items'];
 	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $calc_array['payment_ids'], $calc_array['total_amount']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
@@ -43,7 +44,7 @@ class ProcessController extends Controller {
 	      return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago.');
 	    }
     }
-
+  
     public function getMakeSinglePayment($customer_id, $payment_id, $custom_app_key = NULL) {
         if(config('pagostt.enable_bridge')){
             $customer = \PagosttBridge::getCustomer($customer_id, false, false, $custom_app_key);
@@ -78,8 +79,9 @@ class ProcessController extends Controller {
             $payments = \Customer::getCheckboxPayments($customer_id, $payments_array, $custom_app_key);
         }
 	    if($customer&&count($payments)>0){
-	      $calc_array = \Pagostt::calculateMultiplePayments($payments); // Returns items, payment_ids and amount.
-	      $payment = ['name'=>'Múltiples pagos seleccionados', 'items'=>$calc_array['items']];
+	      $calc_array = \Pagostt::calculateMultiplePayments($payments['pending_payments']); // Returns items, payment_ids and amount.
+	      $payment = $customer['payment'];
+	      $payment['items'] = $calc_array['items'];
 	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $calc_array['payment_ids'], $calc_array['total_amount']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
