@@ -72,15 +72,15 @@ class ProcessController extends Controller {
         $customer_id = $request->input('customer_id');
         $payments_array = $request->input('check');
         if(config('pagostt.enable_bridge')){
-            $customer = \PagosttBridge::getCustomer($customer_id, true, false, $custom_app_key);
+            $customer = \PagosttBridge::getCustomer($customer_id, false, false, $custom_app_key);
             $payments = \PagosttBridge::getCheckboxPayments($customer_id, $payments_array, $custom_app_key);
         } else {
-            $customer = \Customer::getCustomer($customer_id, true, false, $custom_app_key);
+            $customer = \Customer::getCustomer($customer_id, false, false, $custom_app_key);
             $payments = \Customer::getCheckboxPayments($customer_id, $payments_array, $custom_app_key);
         }
 	    if($customer&&count($payments)>0){
 	      $calc_array = \Pagostt::calculateMultiplePayments($payments['pending_payments']); // Returns items, payment_ids and amount.
-	      $payment = $customer['payment'];
+	      $payment = $payments['payment'];
 	      $payment['items'] = $calc_array['items'];
 	      $pagostt_transaction = \Pagostt::generatePaymentTransaction($customer_id, $calc_array['payment_ids'], $calc_array['total_amount']);
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
