@@ -17,6 +17,10 @@ class MasterSeeder extends Seeder {
         // Módulo General de Empresa ERP
         $node_ptt_transaction = \Solunes\Master\App\Node::create(['name'=>'ptt-transaction', 'location'=>'pagostt', 'folder'=>'payments']);
         \Solunes\Master\App\Node::create(['name'=>'ptt-transaction-payment', 'location'=>'pagostt', 'folder'=>'payments', 'type'=>'subchild', 'parent_id'=>$node_ptt_transaction->id]);
+        if(config('pagostt.enable_preinvoice')){
+            $node_preinvoice = \Solunes\Master\App\Node::create(['name'=>'preinvoice', 'location'=>'pagostt', 'folder'=>'parameters']);
+            \Solunes\Master\App\Node::create(['name'=>'preinvoice-item', 'location'=>'pagostt', 'folder'=>'payments', 'type'=>'child', 'parent_id'=>$node_preinvoice->id]);
+        }
 
         // Usuarios
         $admin = \Solunes\Master\App\Role::where('name', 'admin')->first();

@@ -145,7 +145,7 @@ class Pagostt {
         if($custom_app_key&&config('pagostt.custom_app_keys.'.$custom_app_key)){
             $app_key = config('pagostt.custom_app_keys.'.$custom_app_key);
         } else {
-            $app_key = config('pagostt.app_key');
+            $app_key = \Pagostt::getAppKey(NULL);
         }
         if(config('pagostt.finish_payment_verification')){
             $payment = \PagosttBridge::finishPaymentVerification($payment, $pagostt_transaction);
@@ -189,25 +189,14 @@ class Pagostt {
     }
 
     public static function generateTransactionQuery($pagostt_payment, $final_fields) {
-        // Consulta CURL a Web Service
-        $url = 'http://www.todotix.com:10365/rest/deuda/registrar';
-        $ch = curl_init();
-        $options = array(
-            CURLOPT_URL            => $url,
-            CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => json_encode($final_fields),
-            CURLOPT_RETURNTRANSFER => true,
-        );
-        curl_setopt_array($ch, $options);
-        $result = curl_exec($ch);
-        curl_close($ch);  
-
-        // Decodificar resultado
-        $decoded_result = json_decode($result);
+        $url = \Pagostt::queryTransactiontUrl('deuda/registrar');
+        $decoded_result = \Pagostt::queryCurlTransaction($url, $final_fields);
         
         if(!isset($decoded_result->url_pasarela_pagos)){
-            \Log::info('Error en PagosTT: '.json_encode($decoded_result));
+            \Log::info('Error en PagosTT Deuda: '.json_encode($decoded_result));
             return NULL;
+        } else {
+            \Log::info('Success en PagosTT Deuda: '.json_encode($decoded_result));
         }
 
         // Guardado de transaction_id generado por PagosTT
@@ -295,6 +284,134 @@ class Pagostt {
             $url .= '/'.$transaction_id.'?transaction_id='.$transaction_id;
         }
         return $url;
+    }
+
+    public static function queryTransactiontUrl($action) {
+        if(config('pagostt.testing')){
+            $url = config('pagostt.test_server');
+        } else {
+            $url = config('pagostt.main_server');
+        }
+        $url .= $action;
+        return $url;
+    }
+
+    public static function getAppKey($appkey) {
+        if(!$appkey){
+            if(config('pagostt.testing')){
+                $appkey = config('pagostt.test_app_key');
+            } else {
+                $appkey = config('pagostt.app_key');
+            }
+        }
+        return $appkey;
+    }
+
+    public static function queryCurlTransaction($url, $final_fields) {
+        $ch = curl_init();
+        $options = array(
+            CURLOPT_URL            => $url,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => json_encode($final_fields),
+            CURLOPT_RETURNTRANSFER => true,
+        );
+        curl_setopt_array($ch, $options);
+        $result = curl_exec($ch);
+        curl_close($ch);  
+        \Log::info(json_encode($url));
+
+        // Decodificar resultado
+        $decoded_result = json_decode($result);
+        return $decoded_result;
+    }
+
+    public static function generateTestingPayment() {
+        $customer = ['email'=>'edumejia30@gmail.com','nit_name'=>'Mejia','nit_number'=>'4768578017','ci_number'=>'4768578','first_name'=>'Eduardo','first_name'=>'Eduardo','last_name'=>'Mejia'];
+        $payment_lines = [\Pagostt::generatePaymentItem('Pago por muestra 1', 1, 100), \Pagostt::generatePaymentItem('Pago por muestra 2', 1, 100)];
+        $payment = ['has_invoice'=>1,'name'=>'Pago de muestra 1','items'=>$payment_lines];
+        $pagostt_transaction = \Pagostt::generatePaymentTransaction(1, [1], 200);
+        $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction);
+        $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
+        return $api_url;
+    }
+
+    public static function generatePreInovices($payments_array, $appkey = NULL) {
+        if(!config('pagostt.enable_preinvoice')||count($payments_array)==0){
+            return false;
+        }
+        if(!$appkey){
+            $appkey = \Pagostt::getAppKey($appkey);
+        }
+        $final_fields = [];
+        $count = 0;
+        $invoice_batch = time().'_'.rand(100000,900000);
+        \Log::info(json_encode($payments_array));
+        foreach($payments_array as $payment_item){
+            $count++;
+            $final_fields[] = \Pagostt::generatePreInovicesItem($payment_item, $invoice_batch, $count, $appkey);
+        }
+
+        $url = \Pagostt::queryTransactiontUrl('prefacturas/registrar');
+        //\Log::info('Test en PagosTT: '.json_encode($final_fields));
+        $decoded_result = \Pagostt::queryCurlTransaction($url, $final_fields);
+        
+        if(!$decoded_result||$decoded_result->error==1){
+            \Log::info('Error en PagosTT Prefactura: '.json_encode($decoded_result->mensaje));
+            return NULL;
+        } else if($decoded_result->id_transaccion) {
+            \Log::info('Success en PagosTT Prefactura: '.json_encode($decoded_result));
+        }
+
+        $correct_count = 0;
+        foreach($decoded_result->datos as $payment_response){
+            if($preinvoice = \Solunes\Pagostt\App\Preinvoice::where('invoice_batch', $invoice_batch)->where('return_code', $payment_response->identificador_retorno)->first()){
+                if($payment_response->error_generacion==false){
+                    $correct_count++;
+                    $transaction_id = $decoded_result->id_transaccion;
+                    $preinvoice->pagostt_iterator = $payment_response->identificador_iteracion;
+                    $preinvoice->pagostt_code = $payment_response->identificador_prefactura;
+                    $preinvoice->pagostt_url = $payment_response->url;
+                } else {
+                    $preinvoice->pagostt_error = 1;
+                    $preinvoice->pagostt_message = $payment_response->mensaje;
+                }
+                $preinvoice->save();
+            } else {
+                \Log::info('Preinvoice no encontrado luego de success');
+            }
+        }
+       
+        return $correct_count;
+    }
+
+    public static function generatePreInovicesItem($payment_item, $invoice_batch, $count, $app_key) {
+        $key_name = 'deuda_'.$count;
+        $preinvoice = new \Solunes\Pagostt\App\Preinvoice;
+        $preinvoice->invoice_batch = $invoice_batch;
+        $preinvoice->nit_name = $payment_item['nit_name'];
+        $preinvoice->nit_number = $payment_item['nit_number'];
+        $preinvoice->return_code = $key_name;
+        $preinvoice->save();
+        $final_fields = array(
+            "appkey" => $app_key,
+            "identificador_retorno" => $key_name,
+            "razon_social" => $payment_item['nit_name'],
+            "nit" => $payment_item['nit_number'],
+            "lineas_detalle_factura" => $payment_item['detalle'],
+        );
+        foreach($payment_item['detalle'] as $detalle){
+            $preinvoice_item = new \Solunes\Pagostt\App\PreinvoiceItem;
+            $preinvoice_item->parent_id = $preinvoice->id;
+            $preinvoice_item->detail = $detalle['concepto'];
+            if(isset($detalle['codigo_producto'])){
+                $preinvoice_item->product_code = $detalle['codigo_producto'];
+            }
+            $preinvoice_item->quantity = $detalle['cantidad'];
+            $preinvoice_item->price = $detalle['costo_unitario'];
+            $preinvoice_item->amount = round(floatval($preinvoice_item->quantity) * floatval($preinvoice_item->price), 2);
+            $preinvoice_item->save();
+        }
+        return $final_fields;
     }
 
     public static function sendCustomerTo($url, $customer) {

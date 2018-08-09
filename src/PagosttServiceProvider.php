@@ -38,6 +38,7 @@ class PagosttServiceProvider extends ServiceProvider {
         /* Comandos de Consola */
         $this->commands([
             \Solunes\Pagostt\App\Console\TestEncryption::class,
+            \Solunes\Pagostt\App\Console\TestPagostt::class,
         ]);
 
         $this->mergeConfigFrom(

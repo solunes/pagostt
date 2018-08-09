@@ -13,6 +13,10 @@ class TruncateSeeder extends Seeder {
      */
     public function run()
     {
+        if(config('pagostt.enable_preinvoice')){
+            \Solunes\Pagostt\App\PreinvoiceItem::truncate();
+            \Solunes\Pagostt\App\Preinvoice::truncate();
+        }
         \Solunes\Pagostt\App\PttTransactionPayment::truncate();
         \Solunes\Pagostt\App\PttTransaction::truncate();
     }
