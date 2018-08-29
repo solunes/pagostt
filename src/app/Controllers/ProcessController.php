@@ -85,7 +85,7 @@ class ProcessController extends Controller {
         }
 	    if($customer&&$payment&&auth()->check()){
           $user = auth()->user();
-          if($user->can('manual_payments')){
+          if($user->hasPermission('manual_payments')){
         	  if(config('pagostt.enable_bridge')){
 		      	$cashier_data = \PagosttBridge::cashierPaymentData($user);
 		  	  } else {

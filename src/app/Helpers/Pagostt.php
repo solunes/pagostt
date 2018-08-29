@@ -233,6 +233,7 @@ class Pagostt {
                 $pagostt_payment->transaction_id = $decoded_result->id_transaccion;
                 $pagostt_payment->status = 'paid';
                 $pagostt_payment->save();
+                $pagostt_payment->load('ptt_transaction_payments');
                 if(config('pagostt.enable_bridge')){
                     $payment_registered = \PagosttBridge::transactionSuccesful($pagostt_payment);
                 } else {
