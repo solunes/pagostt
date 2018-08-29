@@ -29,6 +29,10 @@ class MasterSeeder extends Seeder {
             $payments_perm = \Solunes\Master\App\Permission::create(['name'=>'payments', 'display_name'=>'Pagos']);
             $admin->permission_role()->attach([$payments_perm->id]);
         }
+        if(!\Solunes\Master\App\Permission::where('name','manual_payments')->first()){
+            $manual_payments_perm = \Solunes\Master\App\Permission::create(['name'=>'manual_payments', 'display_name'=>'Pagos en Caja']);
+            $admin->permission_role()->attach([$manual_payments_perm->id]);
+        }
 
     }
 }
