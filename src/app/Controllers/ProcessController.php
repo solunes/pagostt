@@ -36,7 +36,11 @@ class ProcessController extends Controller {
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      if($api_url){
-	      	return redirect($api_url);
+	      	if($api_url=='success-cashier'){
+	      		return redirect($this->prev)->with('message_success', 'Su pago en caja fue procesado correctamente.');
+	      	} else {
+	      		return redirect($api_url);
+	      	}
 	      } else {
 	      	return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago en PagosTT.');
 	      }
@@ -58,7 +62,11 @@ class ProcessController extends Controller {
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      if($api_url){
-	      	return redirect($api_url);
+	      	if($api_url=='success-cashier'){
+	      		return redirect($this->prev)->with('message_success', 'Su pago en caja fue procesado correctamente.');
+	      	} else {
+	      		return redirect($api_url);
+	      	}
 	      } else {
 	      	return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago en PagosTT.');
 	      }
@@ -86,7 +94,11 @@ class ProcessController extends Controller {
 	      $final_fields = \Pagostt::generateTransactionArray($customer, $payment, $pagostt_transaction, $custom_app_key);
 	      $api_url = \Pagostt::generateTransactionQuery($pagostt_transaction, $final_fields);
 	      if($api_url){
-	      	return redirect($api_url);
+	      	if($api_url=='success-cashier'){
+	      		return redirect($this->prev)->with('message_success', 'Su pago en caja fue procesado correctamente.');
+	      	} else {
+	      		return redirect($api_url);
+	      	}
 	      } else {
 	      	return redirect($this->prev)->with('message_error', 'Hubo un error al realizar su pago en PagosTT.');
 	      }
