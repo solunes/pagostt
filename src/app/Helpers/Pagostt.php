@@ -198,10 +198,13 @@ class Pagostt {
             $final_fields['descripcion_envio'] = $payment['shipping_detail'];
         } else {
             $final_fields['descripcion_envio'] = "Costo de envío no definido.";
-
         }
         $final_fields['descripcion'] = $payment['name'];
-        $final_fields['lineas_detalle_deuda'] = $payment['items'];
+        if(isset($payment['preinvoices'])){
+            $final_fields['prefacturas'] = $payment['preinvoices'];
+        } else {
+            $final_fields['lineas_detalle_deuda'] = $payment['items'];
+        }
         // Habilitar Pago en Caja
         if(config('pagostt.enable_cashier')&&isset($payment['canal_caja'])&&$payment['canal_caja']==true){
             $cashierKey = \Pagostt::getCashierKey();
