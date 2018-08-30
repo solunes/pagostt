@@ -415,8 +415,13 @@ class Pagostt {
         $invoice_batch = time().'_'.rand(100000,900000);
         \Log::info(json_encode($payments_array));
         foreach($payments_array as $payment_item){
-            $count++;
-            $final_fields[] = \Pagostt::generatePreInovicesItem($payment_item, $invoice_batch, $count, $appkey);
+            if(isset($payment_item['key_name'])){
+                $key_name = $payment_item['key_name'];
+            } else {
+                $count++;
+                $key_name = 'deuda_'.$count;
+            }
+            $final_fields[] = \Pagostt::generatePreInovicesItem($payment_item, $invoice_batch, $key_name, $appkey);
         }
 
         $url = \Pagostt::queryTransactiontUrl('prefacturas/registrar');
@@ -431,6 +436,8 @@ class Pagostt {
         }
 
         $correct_count = 0;
+        $preinvoice_array = [];
+        $preinvoice_errors = [];
         foreach($decoded_result->datos as $payment_response){
             if($preinvoice = \Solunes\Pagostt\App\Preinvoice::where('invoice_batch', $invoice_batch)->where('return_code', $payment_response->identificador_retorno)->first()){
                 if($payment_response->error_generacion==false){
@@ -439,21 +446,21 @@ class Pagostt {
                     $preinvoice->pagostt_iterator = $payment_response->identificador_iteracion;
                     $preinvoice->pagostt_code = $payment_response->identificador_prefactura;
                     $preinvoice->pagostt_url = $payment_response->url;
+                    $preinvoice_array[$payment_response->identificador_retorno] = ['code'=>$payment_response->identificador_prefactura,'url'=>$payment_response->url];
                 } else {
                     $preinvoice->pagostt_error = 1;
                     $preinvoice->pagostt_message = $payment_response->mensaje;
+                    $preinvoice_errors[$payment_response->identificador_retorno] = $payment_response->mensaje;
                 }
                 $preinvoice->save();
             } else {
                 \Log::info('Preinvoice no encontrado luego de success');
             }
         }
-       
-        return $correct_count;
+        return ['success'=>true, 'invoice_batch'=>$invoice_batch, 'count'=>$correct_count, 'preinvoice_array'=>$preinvoice_array, 'preinvoice_errors'=>$preinvoice_errors];
     }
 
-    public static function generatePreInovicesItem($payment_item, $invoice_batch, $count, $app_key) {
-        $key_name = 'deuda_'.$count;
+    public static function generatePreInovicesItem($payment_item, $invoice_batch, $key_name, $app_key) {
         $preinvoice = new \Solunes\Pagostt\App\Preinvoice;
         $preinvoice->invoice_batch = $invoice_batch;
         $preinvoice->nit_name = $payment_item['nit_name'];
