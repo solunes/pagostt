@@ -5,6 +5,7 @@ return array(
 	// MENU
 	'pagostt' => 'PagosTT',
 	'payments' => 'Pagos',
+	'parameters' => 'Parámetros',
 
 	// CUSTOM TRANS
 	'E' => 'Electrónica',
@@ -12,5 +13,6 @@ return array(
 	'cancelled' => 'Cancelado',
 	'holding' => 'Pendiente',
 	'paid' => 'Pagado',
+	'inactive' => 'Inactivo',
 
 );

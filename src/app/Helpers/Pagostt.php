@@ -465,6 +465,7 @@ class Pagostt {
 
     public static function generatePreInovicesItem($payment_item, $invoice_batch, $key_name, $app_key) {
         $preinvoice = new \Solunes\Pagostt\App\Preinvoice;
+        $preinvoice->payment_id = $payment_item['id'];
         $preinvoice->invoice_batch = $invoice_batch;
         $preinvoice->nit_name = $payment_item['nit_name'];
         $preinvoice->nit_number = $payment_item['nit_number'];
@@ -480,9 +481,16 @@ class Pagostt {
         foreach($payment_item['detalle'] as $detalle){
             $preinvoice_item = new \Solunes\Pagostt\App\PreinvoiceItem;
             $preinvoice_item->parent_id = $preinvoice->id;
-            $preinvoice_item->detail = $detalle['concepto'];
+            $preinvoice_item->name = $detalle['concepto'];
+            if(isset($detalle['detalle'])){
+                $preinvoice_item->detail = $detalle['detalle'];
+            } else {
+                $preinvoice_item->name = $detalle['concepto'];
+            }
             if(isset($detalle['codigo_producto'])){
                 $preinvoice_item->product_code = $detalle['codigo_producto'];
+            } else {
+                $preinvoice_item->product_code = $payment_item['id'];
             }
             $preinvoice_item->quantity = $detalle['cantidad'];
             $preinvoice_item->price = $detalle['costo_unitario'];
