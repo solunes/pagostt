@@ -107,6 +107,11 @@ class Pagostt {
         return $ptt_transaction;
     }
 
+    public static function transformCurrency($amount, $currency_exchange) {
+        $amount = $amount * $currency_exchange;
+        return $amount;
+    }
+
     public static function generatePaymentItem($concept, $quantity, $cost, $invoice = true) {
         $item = [];
         $item['concepto'] = $concept;
