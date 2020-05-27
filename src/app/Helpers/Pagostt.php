@@ -230,7 +230,7 @@ class Pagostt {
         $url = \Pagostt::queryTransactiontUrl('deuda/registrar');
         $decoded_result = \Pagostt::queryCurlTransaction($url, $final_fields);
         
-        if(!isset($decoded_result->url_pasarela_pagos)){
+        if(!isset($decoded_result->url_pasarela_pagos)||!$decoded_result->url_pasarela_pagos){
             if($decoded_result->error==0&&isset($decoded_result->id_transaccion)){
                 \Log::info('Iniciando Pago en Caja: '.json_encode($decoded_result));
                 if(isset($decoded_result->facturas_electronicas)){
