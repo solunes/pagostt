@@ -194,6 +194,9 @@ class Pagostt {
         if(isset($payment['has_invoice'])){
             $final_fields['emite_factura'] = $payment['has_invoice'];
         }
+        if(isset($payment['currency'])){
+            $final_fields['moneda'] = $payment['currency'];
+        }
         if(isset($payment['shipping_amount'])){
             $final_fields['valor_envio'] = $payment['shipping_amount'];
         } else {
